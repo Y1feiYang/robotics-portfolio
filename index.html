@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="杨一飞的机器人操作项目选集，涵盖 RoboDojo 仿真评测、Robot Use Agent 和 Isaac Sim 到真机的 VLA 部署。">
   <title>杨一飞 · 机器人操作项目选集</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=home-media">
+  <script src="home-media.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳到正文</a>
@@ -31,11 +32,13 @@
         <h2><a href="robodojo-agent.html">RoboDojo 评测分析与 Robot Use Agent</a></h2>
         <p>分析 42 项仿真任务与 2,100 条 Astra 视频轨迹，复盘失败原因，并改进大模型接入机器人的 Harness。</p>
         <p class="feature-result"><strong>0/1 → 2/4</strong><span>数字排列 · 同布局历史对比的原生成功数<br>平均耗时 −40.1% · 平均总 Token −56.2%</span></p>
-        <a class="button-link" href="robodojo-agent.html" aria-label="阅读 RoboDojo 评测分析与 Robot Use Agent">查看实验与回放</a>
       </div>
       <figure class="feature-figure">
-        <img src="assets/robodojo/arrange-tool-loop.webp" width="640" height="480" alt="RoboDojo 仿真中从左到右排好的数字 9、4、3、2、1">
-        <figcaption>自主工具循环完成数字排列 · 原生 100/100</figcaption>
+        <video controls muted loop playsinline preload="none" data-loop-preview width="1032" height="740" poster="assets/robodojo/harness-successes.webp" aria-label="自研 Harness 的数字排列、堆叠碗、堆叠积木和投币成功回放">
+          <source src="assets/robodojo/harness-successes.mp4" type="video/mp4">
+          <a href="assets/robodojo/harness-successes.mp4">打开成功回放</a>
+        </video>
+        <figcaption>自研 Harness · 四项仿真任务的成功回放</figcaption>
       </figure>
     </article>
 
@@ -44,13 +47,23 @@
         <p class="eyebrow">赛题开发 / Sim2Real</p>
         <h2><a href="dobot-sim2real.html">Dobot 具身智能挑战赛</a></h2>
         <p>协助越疆科技开展赛事技术工作，搭建和调试 Isaac Sim 操作场景，并打通真机遥操、数据采集、π₀.₅ 微调及真机推理验证。</p>
-        <a class="button-link" href="dobot-sim2real.html" aria-label="阅读 Dobot 具身智能挑战赛技术复盘">查看工作流</a>
       </div>
-      <ol class="feature-flow" aria-label="Sim2Real 工作流">
-        <li><span>Isaac Sim</span><strong>任务与场景调试</strong></li>
-        <li><span>Teleoperation</span><strong>真机示教与数据采集</strong></li>
-        <li><span>π₀.₅ / VLA</span><strong>微调与真机部署</strong></li>
-      </ol>
+      <div class="feature-media-pair">
+        <figure>
+          <picture>
+            <source media="(prefers-reduced-motion: reduce)" srcset="assets/dobot/insert-tube-sim.webp">
+            <img src="assets/dobot/insert-tube-sim.gif" width="320" height="240" loading="lazy" alt="赛事仿真场景中，机械臂将绿色试管插入试管架">
+          </picture>
+          <figcaption>仿真插管 · <a href="https://www.caai.cn/site/content/5476.html">官方赛题</a></figcaption>
+        </figure>
+        <figure>
+          <video controls muted loop playsinline preload="none" data-loop-preview width="640" height="360" poster="assets/dobot/insert-tube-3x.webp" aria-label="双臂真机插管，3 倍速循环回放">
+            <source src="assets/dobot/insert-tube-home-3x.mp4" type="video/mp4">
+            <a href="assets/dobot/insert-tube-home-3x.mp4">打开真机插管回放</a>
+          </video>
+          <figcaption>真机插管 · 3×</figcaption>
+        </figure>
+      </div>
     </article>
   </main>
   <footer class="site-footer"><div class="wrap footer-inner"><span>杨一飞 · 机器人操作项目选集</span><a href="https://github.com/Y1feiYang">GitHub</a></div></footer>
