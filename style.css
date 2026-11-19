@@ -123,6 +123,15 @@ td, th { padding: .58rem .8rem; text-align: left; border-top: 1px solid var(--li
 thead { background: #e7eff3; }
 tfoot, .highlight-row { background: var(--pale); }
 .number { white-space: nowrap; }
+.score-details { margin-top: 1.2rem; }
+.score-details summary { cursor: pointer; font-weight: 750; margin-bottom: .65rem; }
+.astra-scores td, .astra-scores th { padding-block: .38rem; }
+.astra-scores .score-group { background: var(--pale); }
+.score-group span { color: var(--muted); font-size: .88em; font-weight: 500; }
+.score-value { white-space: nowrap; }
+.score-value meter { width: clamp(2.25rem, 9vw, 6.5rem); height: .75rem; margin-inline-end: .45rem; vertical-align: middle; }
+.score-value meter::-webkit-meter-optimum-value { background: var(--accent); }
+.score-value meter::-moz-meter-bar { background: var(--accent); }
 .note { color: var(--muted); font-size: .9rem; }
 .result-split { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin: 1.25rem 0; }
 .result-split div { padding: .8rem 1rem; background: var(--white); border: 1px solid var(--line); border-radius: .55rem; }
