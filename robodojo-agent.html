@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="杨一飞的 RoboDojo 评测分析与 Robot Use Agent：42 项仿真任务与 2,100 条 Astra 视频轨迹，以及 Harness 接入、执行回执和性能对比。">
+  <meta name="description" content="杨一飞的 RoboDojo 评测分析与 Robot Use Agent：42 项仿真任务、2,100 条 Astra 视频轨迹，以及 11 项任务的 Harness 性能记录。">
   <title>RoboDojo评测分析与Robot Use Agent · 杨一飞</title>
   <link rel="stylesheet" href="style.css?v=robodojo-harness">
 </head>
@@ -23,7 +23,7 @@
       <section class="wrap article-hero" aria-labelledby="title">
         <p class="eyebrow">仿真评测 / Harness 工程</p>
         <h1 id="title">RoboDojo评测分析与Robot Use Agent</h1>
-        <p class="lede">我分析了 RoboDojo 的 <strong>42 个仿真任务、2,100 条轨迹视频</strong>，并改进了 LLM 接入机器人的 Harness。在数字排列的同布局历史对比中，原生成功率从 <strong>0% 升至 50%（0/1 → 2/4）</strong>，平均墙钟耗时减少 <strong>40.1%</strong>，平均总 Token 减少 <strong>56.2%</strong>。</p>
+        <p class="lede">我分析了 RoboDojo 的 <strong>42 个仿真任务、2,100 条轨迹视频</strong>，并改进了 LLM 接入机器人的 Harness。性能记录覆盖 <strong>11 项任务</strong>。数字排列的同布局历史对比由 <strong>0/1 到 2/4</strong>，平均耗时减少 <strong>40.1%</strong>、总 Token 减少 <strong>56.2%</strong>。物体抓取的一组配对试跑由 <strong>0/1 到 1/1</strong>，耗时减少 <strong>34.0%</strong>、总 Token 减少 <strong>60.1%</strong>。</p>
         <p class="byline">杨一飞 · 2026.10—2026.11</p>
       </section>
     </div>
@@ -33,7 +33,7 @@
         <nav aria-label="本文目录">
           <a href="#benchmark">任务类型与失败归因</a>
           <a href="#agent">Harness 工程改进</a>
-          <a href="#runs">性能对比</a>
+          <a href="#runs">多任务性能对比</a>
           <a href="#sources">数据与来源</a>
         </nav>
       </aside>
@@ -133,46 +133,110 @@
         </section>
 
         <section id="runs" aria-labelledby="runs-heading">
-          <h2 id="runs-heading">性能对比</h2>
-          <h3>数字排列 · Harness 版本</h3>
-          <p>三个版本使用 GPT-6 Astra（medium）、相同布局与物理控制器，环境预算均为 1,050 步。下表保留了逐轮独立调用和持续会话固定循环两条历史基线。新版自主工具循环以冻结配置运行 4 次。</p>
-          <div class="table-scroll" role="region" aria-label="数字排列 Harness 三版本运行对比" tabindex="0">
+          <h2 id="runs-heading">多任务性能对比</h2>
+          <p>本地记录覆盖 11 项任务。下表按任务统计原生成功、墙钟耗时和模型用量。平均值包含有效的成功与失败试次，总 Token 为输入与输出之和，包含缓存输入。</p>
+
+          <h3>自研 Harness 的多任务运行</h3>
+          <div class="table-scroll" role="region" aria-label="自研 Harness 在十项任务上的运行指标" tabindex="0">
             <table>
-              <caption>多个试次取单轮均值，含成功及失败轮。总 Token 为输入与输出之和，含缓存输入。</caption>
-              <thead><tr><th scope="col">接入方式</th><th scope="col">原生成功</th><th scope="col">平均墙钟耗时</th><th scope="col">平均总 Token</th></tr></thead>
+              <caption>GPT-6 Astra（medium）接入自研自主工具循环，10 项任务、49 轮完整运行。耗时格式为分:秒。</caption>
+              <thead><tr><th scope="col">仿真任务</th><th scope="col">布局设置</th><th scope="col">原生成功</th><th scope="col">平均墙钟</th><th scope="col">平均总 Token</th></tr></thead>
               <tbody>
-                <tr><th scope="row">逐轮独立调用</th><td>0/1</td><td class="number">24 分 26 秒</td><td class="number">795,307</td></tr>
-                <tr><th scope="row">持续会话 · 固定循环</th><td>0/1</td><td class="number">12 分 41 秒</td><td class="number">2,346,423</td></tr>
-                <tr class="highlight-row"><th scope="row">持续会话 · 自主工具循环</th><td><strong>2/4</strong></td><td class="number"><strong>7 分 35 秒</strong></td><td class="number"><strong>1,026,704</strong></td></tr>
+                <tr><th scope="row">堆叠碗</th><td>同一布局重复</td><td>5/5</td><td class="number">4:35</td><td class="number">585,293</td></tr>
+                <tr><th scope="row">最大数字排列</th><td>同一布局重复</td><td>2/4</td><td class="number">7:35</td><td class="number">1,026,704</td></tr>
+                <tr><th scope="row">堆叠积木</th><td>布局 0–4</td><td>2/5</td><td class="number">5:54</td><td class="number">740,893</td></tr>
+                <tr><th scope="row">投币</th><td>布局 0–4</td><td>1/5</td><td class="number">3:57</td><td class="number">474,403</td></tr>
+                <tr><th scope="row">瓶子放入垃圾桶</th><td>同一布局重复</td><td>0/5</td><td class="number">6:33</td><td class="number">915,870</td></tr>
+                <tr><th scope="row">套娃排序</th><td>布局 0–4</td><td>0/5</td><td class="number">11:19</td><td class="number">1,534,048</td></tr>
+                <tr><th scope="row">挂杯</th><td>布局 0–4</td><td>0/5</td><td class="number">8:34</td><td class="number">1,314,728</td></tr>
+                <tr><th scope="row">插试管</th><td>布局 0–4</td><td>0/5</td><td class="number">8:05</td><td class="number">980,065</td></tr>
+                <tr><th scope="row">插充电器</th><td>布局 0–4</td><td>1/5*</td><td class="number">5:41</td><td class="number">870,569</td></tr>
+                <tr><th scope="row">整理桌面</th><td>布局 0–4</td><td>0/5</td><td class="number">11:50</td><td class="number">1,531,261</td></tr>
               </tbody>
             </table>
           </div>
-          <p>相对持续会话固定循环，新版样本的成功率相差 <strong>50 个百分点</strong>，平均墙钟耗时减少 <strong>40.1%</strong>，平均总 Token 减少 <strong>56.2%</strong>。两种历史基线各只有一轮，决策轮次与工具调用的预算口径也有差异。按逐轮独立调用作参照，新版平均总 Token 增加 29.1%，平均非缓存输入减少 89.1%。</p>
-          <figure>
-            <video controls playsinline preload="none" width="640" height="480" poster="assets/robodojo/arrange-tool-loop.webp" aria-label="自主工具循环完成数字排列的头部相机回放">
-              <source src="assets/robodojo/arrange-tool-loop.mp4" type="video/mp4">
-              <a href="assets/robodojo/arrange-tool-loop.mp4">打开数字排列回放</a>
-            </video>
-            <figcaption>自主工具循环的一次成功运行，原生 100/100。画面按仿真控制步记录，模型等待时间计入上表墙钟耗时。</figcaption>
-          </figure>
-          <h3>物体抓取 · 提示词迭代</h3>
-          <p>我把逐任务复盘整理为感知、任务状态、操作策略、运动协调、接触执行和监测恢复六类提示。在一组同任务、同布局、同种子、同模型的试跑中，工具和观测保持一致，两轮上限均为 30 次调用。</p>
-          <div class="table-scroll" role="region" aria-label="物体抓取的两轮提示词试跑" tabindex="0">
+          <p class="note">* 插充电器有一轮在过程中触发原生成功，结束时充电器已离开有效位置。按最终插入和直立条件复核为 0/5。各任务的布局、控制步预算与操作难度不同，表中各行按各自试次解读。</p>
+
+          <h3>提示词改动 · 按实际布局配对</h3>
+          <p>在同一任务与实际布局上，固定 GPT-6 Astra（medium）、种子、观测和工具。每行以该组的原始提示为基线。百分比表示新版相对基线的变化。</p>
+          <div class="table-scroll" role="region" aria-label="三项任务的提示词配对结果" tabindex="0">
             <table>
-              <caption>物体抓取 · 布局 0、种子 0 · 每种提示运行一次。</caption>
-              <thead><tr><th scope="col">提示配置</th><th scope="col">原生成功</th><th scope="col">墙钟耗时</th><th scope="col">总 Token</th><th scope="col">模型调用</th></tr></thead>
+              <caption>原始提示 → 改动后。各试验组独立统计。</caption>
+              <thead><tr><th scope="col">任务与提示改动</th><th scope="col">原生成功</th><th scope="col">平均墙钟（分:秒）</th><th scope="col">平均总 Token</th></tr></thead>
               <tbody>
-                <tr><th scope="row">原始提示</th><td>0/1</td><td class="number">12 分 37 秒</td><td class="number">727,040</td><td>30</td></tr>
-                <tr class="highlight-row"><th scope="row">合并六类提示</th><td><strong>1/1</strong></td><td class="number"><strong>8 分 19 秒</strong></td><td class="number"><strong>289,745</strong></td><td>14</td></tr>
+                <tr class="score-group"><th scope="rowgroup" colspan="4">模型调用上限 30 次</th></tr>
+                <tr><th scope="row">物体抓取 · 六类合并提示</th><td class="number">0/1 → 1/1</td><td class="number">12:37 → 8:19<br><span class="note">−34.0%</span></td><td class="number">727,040 → 289,745<br><span class="note">−60.1%</span></td></tr>
+                <tr><th scope="row">套娃排序 · 仅加重规划提示</th><td class="number">0/1 → 0/1</td><td class="number">13:16 → 11:27<br><span class="note">−13.8%</span></td><td class="number">744,095 → 590,496<br><span class="note">−20.6%</span></td></tr>
+              </tbody>
+              <tbody>
+                <tr class="score-group"><th scope="rowgroup" colspan="4">模型调用上限 60 次</th></tr>
+                <tr><th scope="row">物体抓取 · 仅加抓取提示</th><td class="number">3/5 → 3/5</td><td class="number">7:43 → 10:35<br><span class="note">+37.2%</span></td><td class="number">585,705 → 931,485<br><span class="note">+59.0%</span></td></tr>
+                <tr><th scope="row">数字排列 · 仅加抓取提示</th><td class="number">0/5 → 0/5</td><td class="number">20:21 → 19:10<br><span class="note">−5.8%</span></td><td class="number">2,146,166 → 2,127,009<br><span class="note">−0.9%</span></td></tr>
+                <tr><th scope="row">套娃排序 · 仅加抓取提示</th><td class="number">0/5 → 0/5</td><td class="number">19:53 → 20:16<br><span class="note">+1.9%</span></td><td class="number">1,883,304 → 2,037,309<br><span class="note">+8.2%</span></td></tr>
               </tbody>
             </table>
           </div>
-          <p>这一组从失败变为成功，耗时减少 <strong>34.0%</strong>，总 Token 减少 <strong>60.1%</strong>。在后续覆盖抓取、数字排列和套娃排序的 15 组配对中，单独加抓取提示时两组各成功 <strong>3/15</strong>，平均耗时增加 4.3%，平均总 Token 增加 10.4%。后续实验测试的是单项提示，六类提示合并的收益目前来自一组试跑。</p>
+          <p>在 30 次调用上限的试跑中，物体抓取由失败变为成功。套娃排序两轮均未通过，基线和重规划组分别在串行与并行阶段执行，耗时按各自环境记录。在 60 次上限的 15 组配对中，两版均成功 3/15。仅加抓取提示时，物体抓取和套娃排序的平均耗时与 Token 均增加。</p>
+
+          <h3>同布局编号的 RoboProbe 参照</h3>
+          <p>从公开 RoboProbe Astra 轨迹中筛选种子 0、布局 0–4，与自研系统同任务、同编号的五轮记录并列。两套系统使用不同的控制工具和调用预算，适合观察同编号布局的结果差异。</p>
+          <div class="table-scroll" role="region" aria-label="公开 RoboProbe 与自研 Harness 同布局编号的成功次数" tabindex="0">
+            <table>
+              <caption>完整成功数 / 5 轮。使用双方都有记录的原生成功判定。</caption>
+              <thead><tr><th scope="col">仿真任务</th><th scope="col">公开 RoboProbe · Astra</th><th scope="col">自研 Harness · Astra</th></tr></thead>
+              <tbody>
+                <tr class="highlight-row"><th scope="row">投币</th><td>0/5</td><td><strong>1/5</strong></td></tr>
+                <tr><th scope="row">堆叠积木</th><td>5/5</td><td>2/5</td></tr>
+                <tr><th scope="row">套娃排序</th><td>0/5</td><td>0/5</td></tr>
+                <tr><th scope="row">挂杯</th><td>0/5</td><td>0/5</td></tr>
+                <tr><th scope="row">插试管</th><td>0/5</td><td>0/5</td></tr>
+                <tr><th scope="row">整理桌面</th><td>0/5</td><td>0/5</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <details class="score-details">
+            <summary>插试管与整理桌面 · 更换模型后的同布局对比</summary>
+            <p>每项五组布局配对，沿用各任务原有的 Harness，只将 GPT-6 Astra 更换为 GPT-6.2 Astra。两项完整成功数均持平，过程分反映任务进度。</p>
+            <div class="table-scroll" role="region" aria-label="插试管与整理桌面的同布局模型对比" tabindex="0">
+              <table>
+                <caption>GPT-6 Astra → GPT-6.2 Astra，推理档位均为 medium。</caption>
+                <thead><tr><th scope="col">仿真任务</th><th scope="col">原生成功</th><th scope="col">平均过程分</th><th scope="col">平均墙钟（分:秒）</th><th scope="col">平均总 Token</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">插试管</th><td class="number">0/5 → 0/5</td><td class="number">12 → 20</td><td class="number">8:05 → 8:24<br><span class="note">+3.9%</span></td><td class="number">980,065 → 716,370<br><span class="note">−26.9%</span></td></tr>
+                  <tr><th scope="row">整理桌面</th><td class="number">0/5 → 0/5</td><td class="number">25 → 50</td><td class="number">11:50 → 11:06<br><span class="note">−6.3%</span></td><td class="number">1,531,261 → 1,413,508<br><span class="note">−7.7%</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+
+          <details class="score-details">
+            <summary>数字排列 · 三个 Harness 版本与成功回放</summary>
+            <p>三个版本使用 GPT-6 Astra（medium）、同一布局和物理控制器，环境预算均为 1,050 步。两种历史基线各一轮，新版以冻结配置运行四轮，决策或工具调用预算的口径有差异。</p>
+            <div class="table-scroll" role="region" aria-label="数字排列 Harness 三版本运行对比" tabindex="0">
+              <table>
+                <thead><tr><th scope="col">接入方式</th><th scope="col">原生成功</th><th scope="col">平均墙钟</th><th scope="col">平均总 Token</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">逐轮独立调用</th><td>0/1</td><td class="number">24:26</td><td class="number">795,307</td></tr>
+                  <tr><th scope="row">持续会话 · 固定循环</th><td>0/1</td><td class="number">12:41</td><td class="number">2,346,423</td></tr>
+                  <tr class="highlight-row"><th scope="row">持续会话 · 自主工具循环</th><td><strong>2/4</strong></td><td class="number"><strong>7:35</strong></td><td class="number"><strong>1,026,704</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>相对固定循环，观察成功率相差 <strong>50 个百分点</strong>，平均墙钟耗时减少 <strong>40.1%</strong>，平均总 Token 减少 <strong>56.2%</strong>。相对逐轮独立调用，平均总 Token 增加 29.1%，平均非缓存输入减少 89.1%。</p>
+            <figure>
+              <video controls playsinline preload="none" width="640" height="480" poster="assets/robodojo/arrange-tool-loop.webp" aria-label="自主工具循环完成数字排列的头部相机回放">
+                <source src="assets/robodojo/arrange-tool-loop.mp4" type="video/mp4">
+                <a href="assets/robodojo/arrange-tool-loop.mp4">打开数字排列回放</a>
+              </video>
+              <figcaption>自主工具循环的一次成功运行，原生 100/100。录像按仿真控制步记录，模型等待时间计入墙钟耗时。</figcaption>
+            </figure>
+          </details>
         </section>
 
         <section id="sources" aria-labelledby="sources-heading">
           <h2 id="sources-heading">数据与来源</h2>
-          <p>42 项 Astra 成绩来自我整理的仿真逐任务评测。Harness 版本对比与提示词试跑来自两套本地工作台，分别记录原生判分、墙钟耗时和输入输出用量。</p>
+          <p>42 项 Astra 成绩来自我整理的仿真逐任务评测。多任务实测与模型换版取自自研 Harness 工作台，提示词试跑取自 RoboDojo 实验工作台。同布局编号的系统参照取自公开 RoboProbe 逐轮记录。</p>
           <ul class="source-list">
             <li><a href="https://robodojo-benchmark.com/report/gpt-6-astra-eval">RoboDojo GPT-6 Astra 评测报告</a> · <a href="https://arxiv.org/html/2609.24170v1">RoboDojo 评测协议</a></li>
             <li><a href="https://huggingface.co/datasets/Solomonz/roboprobe-astra-rollouts">RoboProbe Astra 视频轨迹数据</a> · <a href="https://huggingface.co/spaces/Solomonz/roboprobe-console">公开回放工作台</a></li>
