@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="2026 Dobot 具身智能挑战赛技术支持：Isaac Sim 赛题开发与 Sim2Real VLA 微调。">
+<title>Dobot 具身智能挑战赛技术支持</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="wrap"><nav aria-label="作品导航"><a href="index.html">项目选集</a><a href="robodojo-agent.html">RoboDojo 与 Robot-use Agent</a><a href="dobot-sim2real.html" aria-current="page">Dobot 挑战赛</a></nav><div class="hero"><p class="eyebrow">02 · Isaac Sim / Sim2Real</p><h1>Dobot 具身智能挑战赛技术支持</h1><p>参与 2026 Dobot 具身智能挑战赛的技术支持，主要工作是基于 Isaac Sim 开发机器人操作任务，以及面向真实机器人的 VLA 微调。</p></div></div></header>
+<main class="wrap content">
+<section aria-labelledby="context"><h2 id="context">赛事背景和个人分工</h2><p class="lede">赛事由中国人工智能学会主办，越疆科技等单位联合承办，包含线上仿真初赛和线下真机决赛。公开赛题覆盖料品分拣、双臂工位清洁和试管取放；这些是赛事范围，并不等于我独立负责全部赛题。<a href="https://www.caai.cn/site/content/5476.html">查看 CAAI 官方赛事公告</a>。</p>
+<div class="grid"><div class="panel"><p class="case-label">我的工作</p><h3>Isaac Sim 赛题开发</h3><p>在 Isaac Sim 中进行机器人操作任务开发，围绕操作目标组织场景和物体，理解任务配置如何影响数据采集与后续验证。</p></div><div class="panel"><p class="case-label">我的工作</p><h3>Sim2Real VLA 微调</h3><p>参与面向真机的 VLA 微调，将训练环节与部署端的观测和动作定义对齐，关注仿真与真实硬件的差异如何影响策略执行。</p></div></div></section>
+<section aria-labelledby="pipeline"><h2 id="pipeline">从场景到真机的流水线</h2>
+<ol class="flow">
+<li class="panel"><h3>仿真任务</h3><p>定义操作目标，搭建场景，检查物体与机器人是否按预期交互。</p></li>
+<li class="panel"><h3>示教与数据</h3><p>检查任务指令、相机观测与时间同步，明确动作的坐标系、单位与夹爪约定。</p></li>
+<li class="panel"><h3>模型微调</h3><p>确保数据和模型的观测、动作接口一致，用任务回放排查训练与部署端的输入输出问题。</p></li>
+<li class="panel"><h3>真机验证</h3><p>核对标定与动作映射，记录失败发生在接近目标、接触还是完成动作之后。</p></li>
+</ol><p class="lede">这条链路的关键是保持训练和部署使用相同的动作含义。到达真机后，如果坐标系、单位或夹爪约定变了，应先排除接口问题，再判断是否是模型没有学会任务。</p></section>
+<section aria-labelledby="demos"><h2 id="demos">演示素材</h2><div class="grid">
+<div class="panel"><h3>真机遥操作</h3><div class="media-empty"><p>待补可公开的真机遥操作片段。</p></div></div>
+<div class="panel"><h3>真机策略推理</h3><div class="media-empty"><p>待补可公开的真机推理片段及运行条件。</p></div></div>
+</div></section>
+</main><footer class="wrap foot"><a href="index.html">返回项目选集</a></footer>
+</body></html>

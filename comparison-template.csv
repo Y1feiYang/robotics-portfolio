@@ -1,0 +1,1 @@
+task,seed,layout_id,episode_id,condition,model,model_budget,prompt_version,observation_config,scorer_version,task_success,contact_stage_success,contact_time_sec,high_level_replans,valid_triggers,false_triggers,termination_reason,video_path,notes

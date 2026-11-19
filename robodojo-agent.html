@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="RoboDojo 任务与评分分析、Robot-use Agent 轻量执行层及其对照评测设计。">
+<title>RoboDojo 评测分析与 Robot-use Agent</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="wrap"><nav aria-label="作品导航"><a href="index.html">项目选集</a><a href="robodojo-agent.html" aria-current="page">RoboDojo 与 Robot-use Agent</a><a href="dobot-sim2real.html">Dobot 挑战赛</a></nav><div class="hero"><p class="eyebrow">01 · Benchmark / Agent</p><h1>从 RoboDojo 评测到 Robot-use Agent</h1><p>末端到了目标附近，为什么还是没做成？先确定评测究竟在考什么，再决定哪些动作需要由执行层在接触发生时调整。</p></div></div></header>
+<main class="wrap content">
+<section aria-labelledby="review"><h2 id="review">评测分析：任务分数无法直接解释失败</h2><p class="lede">我整理了 RoboDojo 逐任务案例，记录按键触发确认、抓取稳定性、接触对位等失败现象。这些现象发生在不同环节：模型可能没理解流程，也可能找错位置，或是在正确位置没有形成有效接触。仅凭最终分数无法区分这些解释。</p>
+<div class="grid">
+<div class="panel"><p class="case-label">任务说明与评分</p><h3>按键按到了，为什么还是零分？</h3><p>以公开的 <code>press_by_number</code> 为例，短指令容易读成最后只确认一次；详细指令与评分要求却是左红键按指定次数、按蓝键确认、中红键按指定次数、再按蓝键并归位。评测时应先核对模型实际收到的是哪一版指令。</p></div>
+<div class="panel"><p class="case-label">执行与观测</p><h3>画面里碰到，不等于被记为一次有效按压</h3><p>评分还会检查按钮行程与释放。即使执行轨迹靠近目标，也要看按压和释放的时间序列，才能区分没压到位、还没弹回、顺序错误等情况。单个成功率也不应被直接解释为真机接触能力。</p></div>
+</div><p class="callout"><strong>评测建议：</strong>固定指令、观测与评分器，记录分阶段进度和事件。保留官方分数，同时单列例如有效触发与误触发的诊断指标，避免用改过的评分口径冒充官方结果。</p></section>
+<section aria-labelledby="engineering"><h2 id="engineering">工程改进：只在接触阶段加入局部反馈</h2><p class="lede">Robot-use Agent 的改进方向是保留原有的高层目标选择与空载移动，只把接触后的高频调整放到轻量执行层。不需要重新训练大模型，也不需要另设一个负责全程控制的模型。</p>
+<div class="grid">
+<div class="panel"><p class="case-label">直接控制 · 对照组</p><h3>大模型规划并下发动作</h3><p>用模型给出的工具动作接近与执行。如果需要高层重新看结果再决策，接触期间的偏差无法由当次高层调用及时纠正。</p></div>
+<div class="panel"><p class="case-label">改进方案 · 实验组</p><h3>高层给目标，工具内处理接触</h3><p>保持高层模型和目标接口不变，在接触阶段用可用反馈判断动作是否推进、是否卡住或应退出，减少把微小姿态变化都交给高层重新规划。</p></div>
+</div></section>
+<section aria-labelledby="results"><h2 id="results">如何判断改进是否有效</h2><p class="lede">比较时固定模型、初始场景、指令、传感输入和评分器，只改变是否启用局部反馈。若某种反馈需要额外传感输入，单列该实验，避免把新增观测的收益当成执行算法收益。</p>
+<ul class="metrics"><li><strong>结果：</strong>完整任务成功率、接触阶段完成率。</li><li><strong>效率：</strong>接触段耗时、高层重规划次数。</li><li><strong>诊断：</strong>实际触发、误触发、卡住或主动退出，按事件对齐比较。</li></ul>
+<div class="grid"><div class="panel"><h3>直接控制</h3><div class="media-empty"><p>待补同条件基线片段。</p></div></div><div class="panel"><h3>接触阶段局部反馈</h3><div class="media-empty"><p>待补同条件实验片段。</p></div></div></div>
+<p class="callout"><strong>实验结果：</strong>目前没有可公开的同条件对照记录，不报告提升幅度。回放应标注共同的模型、初始场景与预算。<a href="comparison-template.csv" download>下载对照记录模板</a>。</p></section>
+<section aria-labelledby="sources"><h2 id="sources">公开资料</h2><ul class="source-list"><li><a href="https://robodojo-benchmark.com/doc/sim-tasks/press-by-number/">RoboDojo：Press By Number 任务说明和评分</a></li><li><a href="https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/task/RoboDojo/tasks/press_by_number.py#L380-L506">RoboDojo：任务与评分实现</a></li><li><a href="https://robodojo-benchmark.com/leaderboard/protocol?lang=en">RoboDojo：Agent Track 评测规则</a></li><li><a href="https://robotuse-team.github.io/">RobotUse：并列回放与直接控制基线的展示参考</a></li></ul></section>
+</main><footer class="wrap foot"><a href="index.html">返回项目选集</a></footer>
+</body></html>
