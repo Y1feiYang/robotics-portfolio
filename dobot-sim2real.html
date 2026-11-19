@@ -34,6 +34,7 @@
         <p>本文目录</p>
         <nav aria-label="本文目录">
           <a href="#role">我的分工</a>
+          <a href="#competition-demo">官方赛题演示</a>
           <a href="#pipeline">开发与部署</a>
           <a href="#simulation-case">试管插入评分示例</a>
           <a href="#interfaces">训练与真机接口</a>
@@ -48,6 +49,17 @@
           <h2 id="role-title">我的分工</h2>
           <p>赛事包含线上仿真和线下真机两个阶段。赛方公布的三类操作任务是料品分拣、工位清洁和试管取放，分别涉及多视角检测与分类、双臂工具操作、精确抓取与插入。<a href="https://challenge.dobot-robots.com/">Dobot 赛事官网</a></p>
           <p>我的工作覆盖两条链路。仿真侧负责基于 Isaac Sim 搭建协作机械臂操作场景并调试任务。真机侧从遥操采集出发，接通 VLA 训练和策略部署，完成真机推理验证。两条链路的交接点是任务目标、机器人观测和动作接口。</p>
+        </section>
+
+        <section id="competition-demo" aria-labelledby="competition-demo-title">
+          <h2 id="competition-demo-title">官方赛题演示</h2>
+          <figure>
+            <video controls playsinline preload="none" width="640" height="536" poster="assets/dobot/competition-tasks.webp" aria-label="Dobot 挑战赛的料品分拣、工位清洁和试管取放演示">
+              <source src="assets/dobot/competition-tasks.mp4" type="video/mp4">
+              <a href="assets/dobot/competition-tasks.gif">查看合成 GIF</a>
+            </video>
+            <figcaption>料品分拣、工位清洁与试管取放。<a href="https://www.caai.cn/site/content/5476.html">中国人工智能学会赛事公告</a> · <a href="assets/dobot/competition-tasks.gif" download>下载合成 GIF</a></figcaption>
+          </figure>
         </section>
 
         <section id="pipeline" aria-labelledby="pipeline-title">
@@ -104,22 +116,28 @@
             <li><strong>手臂遮挡后抓偏</strong>。回放对应腕部与全局画面，检查视角映射、遮挡、帧对齐和相似布置下的示教覆盖。</li>
             <li><strong>末端接近目标后卡住</strong>。同步观察动作段与物体终态，分别检查动作更新时序、实物几何和接触约束。</li>
           </ul>
-          <p class="callout"><strong>验证范围</strong>　已跑通从真机采集到策略上机推理的链路。本文公开的是流程与验收口径，暂无可公开的逐轮成功率和对照结果。</p>
+          <p class="callout"><strong>验证范围</strong>　已跑通从真机采集到策略上机推理的链路。下方提供两段真机运行片段，逐轮成功率和对照结果待整理。</p>
         </section>
 
         <section id="videos" aria-labelledby="videos-title">
           <h2 id="videos-title">真机演示</h2>
-          <p>越疆公开的 X-Trainer 插管数据卡记录了 119 条示教、30 Hz 控制频率与三个相机视角，可在数据集页查看样例。这是越疆发布的参考数据。<a href="https://huggingface.co/datasets/Dobot-Official/X-Trainer-tube">查看数据卡与视频样例</a></p>
           <div class="media-grid">
-            <article class="panel">
-              <h3>遥操作与示教采集</h3>
-              <p>视频待补。展示人工控制机械臂以及示教轨迹如何记录相机画面和动作。</p>
-            </article>
-            <article class="panel">
-              <h3>π₀.₅ 真机推理</h3>
-              <p>视频待补。展示同类任务的自主执行过程，附任务指令、运行条件和最终物体状态。</p>
-            </article>
+            <figure class="panel">
+              <video controls playsinline preload="none" width="960" height="540" poster="assets/dobot/insert-tube-3x.webp" aria-label="真机双臂插管演示，3 倍速">
+                <source src="assets/dobot/insert-tube-3x.mp4" type="video/mp4">
+                <a href="assets/dobot/insert-tube-3x.mp4">打开双臂插管视频</a>
+              </video>
+              <figcaption><strong>双臂插管 · 3×</strong><br>两支试管最终插入支架。第二支就位前，有手进入工作区。</figcaption>
+            </figure>
+            <figure class="panel">
+              <video controls playsinline preload="none" width="960" height="540" poster="assets/dobot/pull-tube-plug-finetune-2x.webp" aria-label="真机拔取试管塞演示，2 倍速">
+                <source src="assets/dobot/pull-tube-plug-finetune-2x.mp4" type="video/mp4">
+                <a href="assets/dobot/pull-tube-plug-finetune-2x.mp4">打开拔取试管塞视频</a>
+              </video>
+              <figcaption><strong>微调验证 · 拔取试管塞 · 2×</strong><br>一侧夹爪固定试管，另一侧拔出试管塞，随后将试管放回支架。</figcaption>
+            </figure>
           </div>
+          <p class="note">越疆另有公开的 X-Trainer 插管数据，包含 119 条示教，使用 30 Hz 和三路相机。<a href="https://huggingface.co/datasets/Dobot-Official/X-Trainer-tube">查看越疆公开数据卡</a></p>
         </section>
 
         <section id="references" aria-labelledby="references-title">

@@ -13,6 +13,7 @@
 - `charger-scoring-review` 取自 `charger-layout-01-v2`，并列头部与左腕视角。
 - `tube-slip-recovery` 取自 `tube-contact-recovery-v1` 的 `slip-03` 同步回放，展示原失败续段及每种控制器的首条原样试次。
 
-## 补充真机视频
+## Dobot 赛题与真机素材
 
-将获准公开的遥操与策略推理 MP4 放进 `assets/`，在 `dobot-sim2real.html` 的 `#videos` 段对应位置插入带 `controls playsinline preload="none"` 的 `<video>`。给每段说明添加任务、人工遥操或自主推理、运行条件及播放倍率。
+- `assets/dobot/competition-tasks.gif` 合并了[中国人工智能学会赛事公告](https://www.caai.cn/site/content/5476.html)中的三段动图，网页使用同一合成内容的 MP4 播放版。
+- `assets/dobot/insert-tube-3x.mp4` 和 `assets/dobot/pull-tube-plug-finetune-2x.mp4` 分别为 3 倍速插管和 2 倍速拔塞的真机视频，倍速标注嵌入画面。
