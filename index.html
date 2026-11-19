@@ -1,17 +1,58 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="机器人操作仿真、评测、Agent 执行与 Sim2Real 项目选集。">
-<title>机器人操作项目选集</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="杨一飞的机器人操作项目选集，涵盖 RoboDojo 仿真评测、Robot Use Agent 和 Isaac Sim 到真机的 VLA 部署。">
+  <title>杨一飞 · 机器人操作项目选集</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><div class="wrap"><nav aria-label="作品导航"><a href="index.html" aria-current="page">项目选集</a><a href="robodojo-agent.html">RoboDojo 与 Robot-use Agent</a><a href="dobot-sim2real.html">Dobot 挑战赛</a></nav><div class="hero"><p class="eyebrow">Robotics portfolio</p><h1>机器人操作项目选集</h1></div></div></header>
-<main class="wrap content"><div class="grid" style="grid-template-columns: minmax(0, 1fr)">
-<article class="panel"><p class="eyebrow kicker">01 · Benchmark / Agent</p><h2><a href="robodojo-agent.html">RoboDojo 评测分析与 Robot-use Agent</a></h2><p>从按键案例切入，区分指令、评分和接触执行的问题；展示轻量执行层如何与大模型直接控制做同条件对比。</p></article>
-<article class="panel"><p class="eyebrow kicker">02 · Isaac Sim / Sim2Real</p><h2><a href="dobot-sim2real.html">Dobot 具身智能挑战赛技术支持</a></h2><p>从 Isaac Sim 赛题开发到 Sim2Real VLA 微调，梳理场景、数据、训练与真机验证之间的接口。</p></article>
-</div></main>
-<footer class="wrap foot">项目选集 · 机器人操作与评测</footer>
-</body></html>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap site-nav">
+      <a class="wordmark" href="index.html" aria-current="page">杨一飞 <span>Yifei Yang</span></a>
+      <nav aria-label="项目导航">
+        <a href="robodojo-agent.html">RoboDojo 与 Agent</a>
+        <a href="dobot-sim2real.html">Dobot 挑战赛</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap home-main">
+    <section class="home-intro" aria-labelledby="title">
+      <p class="eyebrow">ROBOTICS PORTFOLIO</p>
+      <h1 id="title">机器人操作项目选集</h1>
+      <p class="lede">我研究机器人仿真评测与操作执行，也在真机上完成数据采集、VLA 微调和策略部署。</p>
+    </section>
+
+    <article class="feature">
+      <div class="feature-copy">
+        <p class="eyebrow">仿真评测 / 执行系统</p>
+        <h2><a href="robodojo-agent.html">RoboDojo 评测分析与 Robot Use Agent</a></h2>
+        <p>复盘 10 项任务的 55 次运行，从按键规则和插管失败定位评测盲点，再把接触阶段的纠偏交给 25 Hz 视觉闭环。</p>
+        <p class="feature-result"><strong>27.1% → 50.0%</strong><span>四个指定接触起点的微扰恢复率<br>固定轨迹 13/48 · 视觉伺服 24/48</span></p>
+        <a class="button-link" href="robodojo-agent.html" aria-label="阅读 RoboDojo 评测分析与 Robot Use Agent">查看实验与回放</a>
+      </div>
+      <figure class="feature-figure">
+        <img src="assets/tube-slip-recovery.webp" width="1256" height="602" alt="RoboDojo 仿真中的试管和机械臂夹爪，展示固定轨迹与视觉伺服的并排回放画面">
+        <figcaption>试管在指间滑动后的单臂接管 · 仿真回放</figcaption>
+      </figure>
+    </article>
+
+    <article class="feature feature-secondary">
+      <div class="feature-copy">
+        <p class="eyebrow">赛题开发 / Sim2Real</p>
+        <h2><a href="dobot-sim2real.html">Dobot 具身智能挑战赛</a></h2>
+        <p>协助越疆科技开展赛事技术工作，搭建和调试 Isaac Sim 操作场景，并打通真机遥操、数据采集、π₀.₅ 微调及真机推理验证。</p>
+        <a class="button-link" href="dobot-sim2real.html" aria-label="阅读 Dobot 具身智能挑战赛技术复盘">查看工作流</a>
+      </div>
+      <ol class="feature-flow" aria-label="Sim2Real 工作流">
+        <li><span>Isaac Sim</span><strong>任务与场景调试</strong></li>
+        <li><span>Teleoperation</span><strong>真机示教与数据采集</strong></li>
+        <li><span>π₀.₅ / VLA</span><strong>微调与真机部署</strong></li>
+      </ol>
+    </article>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-inner"><span>杨一飞 · 机器人操作项目选集</span><a href="https://github.com/Y1feiYang">GitHub</a></div></footer>
+</body>
+</html>

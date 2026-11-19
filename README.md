@@ -1,23 +1,18 @@
-# 机器人操作项目选集
+# 杨一飞 · 机器人操作项目选集
 
-这是无构建依赖的 GitHub Pages 静态站，首页和两篇项目文章通过相对路径互链，可从用户名站点根目录或项目站点子目录打开。
+无构建依赖的 GitHub Pages 静态站。首页、两篇文章及素材使用相对路径，支持项目站点的 `/robotics-portfolio/` 子路径。
 
-- `index.html`：项目选集首页。
-- `robodojo-agent.html`：RoboDojo 分析、轻量执行层与对照方案。
-- `dobot-sim2real.html`：越疆赛事技术支持和 Sim2Real 工作流。
-- `style.css`：共用样式。
-- `.nojekyll`：纯静态发布，不依赖 Jekyll。
-- `comparison-template.csv`：逐轮对照记录模板，仅表头，无成绩。
+- `index.html` 为项目选集首页。
+- `robodojo-agent.html` 包含 RoboDojo 评分复盘、Agent 历史运行及 25 Hz 接触恢复实验。
+- `dobot-sim2real.html` 记录 Isaac Sim 赛题开发、真机示教、π₀.₅ 微调与推理验证。
+- `assets/tube-recovery-trials.csv` 提供 204 次仿真接管的逐次结果。按 `checkpoint` 和 `matched_trial` 对齐各控制器，`nominal` 表示无外加微扰。
 
-## 发布
+## 仿真素材
 
-确认两篇正文和任何拟公开的素材后，将文件放入 GitHub Pages 仓库拟发布的目录中。已有个人站时，可把全部文件放在 `robotics-portfolio/` 子目录下，避免覆盖原首页。新增独立仓库时可用 Settings → Pages → Deploy from a branch，选择对应分支和目录。发布后打开真实 URL 验证首页和两篇文章，再将对应链接放入简历。
+- `number-arrangement-review` 取自本地复跑的 `arrange-uni-010` 布局 2，保留头部相机的末段。
+- `charger-scoring-review` 取自 `charger-layout-01-v2`，并列头部与左腕视角。
+- `tube-slip-recovery` 取自 `tube-contact-recovery-v1` 的 `slip-03` 同步回放，展示原失败续段及每种控制器的首条原样试次。
 
-[GitHub Pages 官方发布说明](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
+## 补充真机视频
 
-## 后补素材
-
-- 第一篇：从本机可公开案例里选一段基线和一段改进后的同条件录像，注明任务、配置、样本量和数据来源。用 CSV 表头逐轮记录，报告时同时给出成功次数和总轮次。未完成同条件比较前，不填提升数字。
-- 第二篇：补经确认可公开的遥操和策略真机推理视频。建议视频为 MP4，把文件置于 `assets/` 并用 `<video controls preload="metadata" src="assets/文件名.mp4"></video>` 替换对应占位；视频说明需区分人工遥操和模型策略推理。
-- 未加入任何本机 URL、未经核实的实验成绩或个人联系方式。
-- 展示结构参考 [RoboTwin 2.0](https://robotwin-platform.github.io/) 的项目概览与模块化案例布局；未使用其代码或媒体。
+将获准公开的遥操与策略推理 MP4 放进 `assets/`，在 `dobot-sim2real.html` 的 `#videos` 段对应位置插入带 `controls playsinline preload="none"` 的 `<video>`。给每段说明添加任务、人工遥操或自主推理、运行条件及播放倍率。

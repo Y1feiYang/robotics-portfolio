@@ -1,29 +1,174 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="RoboDojo 任务与评分分析、Robot-use Agent 轻量执行层及其对照评测设计。">
-<title>RoboDojo 评测分析与 Robot-use Agent</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="杨一飞的 RoboDojo 评测复盘与 Robot Use Agent 实验：按键评分审计、直接工具控制及 25 Hz 试管恢复配对对照。">
+  <title>RoboDojo 评测分析与 Robot Use Agent · 杨一飞</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><div class="wrap"><nav aria-label="作品导航"><a href="index.html">项目选集</a><a href="robodojo-agent.html" aria-current="page">RoboDojo 与 Robot-use Agent</a><a href="dobot-sim2real.html">Dobot 挑战赛</a></nav><div class="hero"><p class="eyebrow">01 · Benchmark / Agent</p><h1>从 RoboDojo 评测到 Robot-use Agent</h1><p>末端到了目标附近，为什么还是没做成？先确定评测究竟在考什么，再决定哪些动作需要由执行层在接触发生时调整。</p></div></div></header>
-<main class="wrap content">
-<section aria-labelledby="review"><h2 id="review">评测分析：任务分数无法直接解释失败</h2><p class="lede">我整理了 RoboDojo 逐任务案例，记录按键触发确认、抓取稳定性、接触对位等失败现象。这些现象发生在不同环节：模型可能没理解流程，也可能找错位置，或是在正确位置没有形成有效接触。仅凭最终分数无法区分这些解释。</p>
-<div class="grid">
-<div class="panel"><p class="case-label">任务说明与评分</p><h3>按键按到了，为什么还是零分？</h3><p>以公开的 <code>press_by_number</code> 为例，短指令容易读成最后只确认一次；详细指令与评分要求却是左红键按指定次数、按蓝键确认、中红键按指定次数、再按蓝键并归位。评测时应先核对模型实际收到的是哪一版指令。</p></div>
-<div class="panel"><p class="case-label">执行与观测</p><h3>画面里碰到，不等于被记为一次有效按压</h3><p>评分还会检查按钮行程与释放。即使执行轨迹靠近目标，也要看按压和释放的时间序列，才能区分没压到位、还没弹回、顺序错误等情况。单个成功率也不应被直接解释为真机接触能力。</p></div>
-</div><p class="callout"><strong>评测建议：</strong>固定指令、观测与评分器，记录分阶段进度和事件。保留官方分数，同时单列例如有效触发与误触发的诊断指标，避免用改过的评分口径冒充官方结果。</p></section>
-<section aria-labelledby="engineering"><h2 id="engineering">工程改进：只在接触阶段加入局部反馈</h2><p class="lede">Robot-use Agent 的改进方向是保留原有的高层目标选择与空载移动，只把接触后的高频调整放到轻量执行层。不需要重新训练大模型，也不需要另设一个负责全程控制的模型。</p>
-<div class="grid">
-<div class="panel"><p class="case-label">直接控制 · 对照组</p><h3>大模型规划并下发动作</h3><p>用模型给出的工具动作接近与执行。如果需要高层重新看结果再决策，接触期间的偏差无法由当次高层调用及时纠正。</p></div>
-<div class="panel"><p class="case-label">改进方案 · 实验组</p><h3>高层给目标，工具内处理接触</h3><p>保持高层模型和目标接口不变，在接触阶段用可用反馈判断动作是否推进、是否卡住或应退出，减少把微小姿态变化都交给高层重新规划。</p></div>
-</div></section>
-<section aria-labelledby="results"><h2 id="results">如何判断改进是否有效</h2><p class="lede">比较时固定模型、初始场景、指令、传感输入和评分器，只改变是否启用局部反馈。若某种反馈需要额外传感输入，单列该实验，避免把新增观测的收益当成执行算法收益。</p>
-<ul class="metrics"><li><strong>结果：</strong>完整任务成功率、接触阶段完成率。</li><li><strong>效率：</strong>接触段耗时、高层重规划次数。</li><li><strong>诊断：</strong>实际触发、误触发、卡住或主动退出，按事件对齐比较。</li></ul>
-<div class="grid"><div class="panel"><h3>直接控制</h3><div class="media-empty"><p>待补同条件基线片段。</p></div></div><div class="panel"><h3>接触阶段局部反馈</h3><div class="media-empty"><p>待补同条件实验片段。</p></div></div></div>
-<p class="callout"><strong>实验结果：</strong>目前没有可公开的同条件对照记录，不报告提升幅度。回放应标注共同的模型、初始场景与预算。<a href="comparison-template.csv" download>下载对照记录模板</a>。</p></section>
-<section aria-labelledby="sources"><h2 id="sources">公开资料</h2><ul class="source-list"><li><a href="https://robodojo-benchmark.com/doc/sim-tasks/press-by-number/">RoboDojo：Press By Number 任务说明和评分</a></li><li><a href="https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/task/RoboDojo/tasks/press_by_number.py#L380-L506">RoboDojo：任务与评分实现</a></li><li><a href="https://robodojo-benchmark.com/leaderboard/protocol?lang=en">RoboDojo：Agent Track 评测规则</a></li><li><a href="https://robotuse-team.github.io/">RobotUse：并列回放与直接控制基线的展示参考</a></li></ul></section>
-</main><footer class="wrap foot"><a href="index.html">返回项目选集</a></footer>
-</body></html>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap site-nav">
+      <a class="wordmark" href="index.html">杨一飞 <span>Yifei Yang</span></a>
+      <nav aria-label="项目导航">
+        <a href="robodojo-agent.html" aria-current="page">RoboDojo 与 Agent</a>
+        <a href="dobot-sim2real.html">Dobot 挑战赛</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <div class="hero-band">
+      <section class="wrap article-hero" aria-labelledby="title">
+        <p class="eyebrow">RoboDojo / Robot Use Agent</p>
+        <h1 id="title">从评测失败定位到接触闭环</h1>
+        <p class="lede">我用逐任务日志和评分源码区分指令、物理执行与判分问题，再在同一接触状态上比较固定轨迹与 25 Hz 视觉伺服。四个指定起点的微扰恢复率由 <strong>13/48</strong> 提升到 <strong>24/48</strong>。</p>
+        <p class="byline">杨一飞 · 2026.10—2026.11</p>
+      </section>
+    </div>
+    <div class="wrap article-layout">
+      <aside class="article-toc">
+        <p>本文目录</p>
+        <nav aria-label="本文目录">
+          <a href="#benchmark">任务设计与评分</a>
+          <a href="#runs">逐任务结果</a>
+          <a href="#agent">Agent 执行层</a>
+          <a href="#recovery">试管恢复对照</a>
+          <a href="#limits">失败边界</a>
+          <a href="#sources">数据与来源</a>
+        </nav>
+      </aside>
+      <div class="article-body">
+        <section id="benchmark" aria-labelledby="benchmark-heading">
+          <h2 id="benchmark-heading">任务分数能解释多少失败？</h2>
+          <p>我回看了 RoboProbe 的 RoboDojo 轨迹，并核对任务说明、工具接口和原生评分源码。在整理的 42 项不同任务笔记里，24 项提及抓取或抓持稳定性，20 项提及精细对齐或接触调整，7 项提及画面、模型自判与系统验收不一致。标签允许重叠，分母是任务笔记数量。这份分类帮助我选出值得复跑的接触失败。</p>
+          <h3>按键案例 · 先区分意图、触发和验收</h3>
+          <p>按数字按键（<code>press_by_number</code>）的简版指令容易读成“两颗红键都按完，再按蓝键确认”。详细指令和评分源码明确了两次确认：第一颗红键按够次数、蓝键确认、第二颗红键按够次数、蓝键再确认，最后双臂归位。比较模型对操作顺序的理解时，应先统一它们收到的指令版本。</p>
+          <ol class="steps">
+            <li><strong>任务理解：</strong>核对模型读到的两张数字卡、按钮对应关系和两次确认的顺序。</li>
+            <li><strong>接触执行：</strong>将末端轨迹与按钮关节行程对齐。评分逐次检查归一化关节位置小于 0.5 和释放后大于 0.9，并限制按压次数。</li>
+            <li><strong>评分判定：</strong>分别记录按压／释放事件、顺序与归位。画面里接触了按钮，仍需要事件日志确认是否计为有效按压。</li>
+          </ol>
+          <p class="callout">我会保留原生分数，并附上逐阶段事件、通过条件和失败回放。比较系统时统一指令、观测权限与控制步预算，同时单独报告模型响应数和墙钟耗时。总分相同的两次运行也可以有不同的失败原因。</p>
+          <p class="note"><a href="https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/task/RoboDojo/tasks/press_by_number.py">核对按键评分源码</a> · <a href="https://huggingface.co/spaces/Solomonz/roboprobe-console">RoboProbe 公共回放</a></p>
+        </section>
+
+        <section id="runs" aria-labelledby="runs-heading">
+          <h2 id="runs-heading">逐任务复盘 · 10 项任务，55 次运行</h2>
+          <p>我在本地选择了以接触难例为主的一批任务，看动作在哪一步失效。堆叠碗全部完成；插试管、挂杯却全部失败。插管录像里，夹着的管能到达孔附近，接触架面后仍可能滑动或倾斜。这个现象把后续实验从整项任务缩小到了接触后的几秒。</p>
+          <div class="table-scroll" role="region" aria-label="RoboDojo 逐任务复盘结果" tabindex="0">
+            <table>
+              <caption>任务级描述统计，样本按任务选取，任务预算不同。成功数采用复盘口径。</caption>
+              <thead><tr><th scope="col">仿真任务</th><th scope="col">成功 / 运行</th><th scope="col">每轮控制步上限</th><th scope="col">平均耗时（分:秒）</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">最大数字排列</th><td>2/9</td><td>1,050</td><td>9:44*</td></tr>
+                <tr><th scope="row">堆叠碗</th><td>5/5</td><td>800</td><td>4:35</td></tr>
+                <tr><th scope="row">瓶子放入垃圾桶</th><td>0/6</td><td>700</td><td>7:22</td></tr>
+                <tr><th scope="row">套娃排序</th><td>0/5</td><td>1,050</td><td>11:19</td></tr>
+                <tr><th scope="row">投币</th><td>1/5</td><td>300</td><td>3:57</td></tr>
+                <tr class="highlight-row"><th scope="row">插试管</th><td>0/5</td><td>500</td><td>8:05</td></tr>
+                <tr><th scope="row">挂杯</th><td>0/5</td><td>800</td><td>8:34</td></tr>
+                <tr><th scope="row">堆积木</th><td>2/5</td><td>550</td><td>5:54</td></tr>
+                <tr><th scope="row">插充电器</th><td>0/5†</td><td>400</td><td>5:41</td></tr>
+                <tr><th scope="row">整理桌面</th><td>0/5</td><td>1,000</td><td>11:50</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">* 原记录对数字排列耗时加了星号，具体统计说明未记录。† 原记录报 1/5 成功，最终插入状态复核后记为 0/5。</p>
+          <div class="media-grid">
+            <figure class="panel">
+              <video controls playsinline preload="none" poster="assets/number-arrangement-review.webp" aria-label="数字排列布局 2 的头部相机回放">
+                <source src="assets/number-arrangement-review.mp4" type="video/mp4">
+                <a href="assets/number-arrangement-review.mp4">下载数字排列回放</a>
+              </video>
+              <figcaption><strong>数字排序 · 自判和得分分离。</strong> 本地复跑 Uni Direct 的布局 2，模型声明完成，原生判分 25/100、未通过。终态能看到降序数字，仍需逐项核对放置位置、朝向与归位。该轮失败的具体判定项没有单独留档。</figcaption>
+            </figure>
+            <figure class="panel">
+              <video controls playsinline preload="none" poster="assets/charger-scoring-review.webp" aria-label="充电器任务的头部和左腕相机回放">
+                <source src="assets/charger-scoring-review.mp4" type="video/mp4">
+                <a href="assets/charger-scoring-review.mp4">下载充电器回放</a>
+              </video>
+              <figcaption><strong>插充电器 · 触发时刻和终态分离。</strong> 这一布局在第 323 步触发原生成功，最终第 396 步复查时，充电器已不再满足插座位置与直立条件。左为头部视角，右为左腕视角。</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section id="agent" aria-labelledby="agent-heading">
+          <h2 id="agent-heading">让模型决定目标，让执行器处理反馈</h2>
+          <p>我实现了 Robot Use Agent 的模型接口、RoboDojo 适配器和执行回执。直接工具控制的基线由大模型逐轮看图和发位姿、夹爪指令，再等待执行结果。改进后，模型保留高层选择和重规划，执行器将动作转换为本体命令，并在局部阶段处理比模型响应更快的反馈。</p>
+          <div class="grid">
+            <div class="panel"><h3>动作接口与回执</h3><p>统一夹爪开口单位，区分移动中调整和到位后闭合。回执记录位姿误差、实测开口、停滞和终止原因。模型可以根据下一帧图像决定是否抬升、换姿态或重抓。</p></div>
+            <div class="panel"><h3>持续工具循环</h3><p>模型在同一会话中调用观察、执行和结束工具。执行工具一次返回新观测和回执；原生评分与模型判断独立保存，便于核对是否真正完成。</p></div>
+          </div>
+          <h3>完整数字排列 · 三版历史运行</h3>
+          <div class="table-scroll" role="region" aria-label="数字排列的三版历史运行" tabindex="0">
+            <table>
+              <caption>每版本取一次有完整记录的运行；同模型、同布局、同物理控制器，环境预算均为 1,050 步。</caption>
+              <thead><tr><th scope="col">接入方式</th><th scope="col">原生分 / 成功</th><th scope="col">墙钟耗时</th><th scope="col">模型响应</th><th scope="col">控制步</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">逐轮独立调用</th><td>40 / 否</td><td>24:26</td><td>25</td><td>987</td></tr>
+                <tr><th scope="row">持续会话，固定循环</th><td>40 / 否</td><td>12:41</td><td>24</td><td>1,033</td></tr>
+                <tr class="highlight-row"><th scope="row">持续会话，自主工具循环</th><td>100 / 是</td><td>6:12</td><td>21</td><td>850</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">工具循环按冻结配置共运行 4 次，原生成功 2/4，墙钟耗时 6:12–9:33。历史版本的决策预算和实际轨迹不同，失败轮的结束时间与成功轮的完成时间也有不同含义。这里的对照用于展示系统行为，估计架构对完整任务的因果收益还需要同期重复实验。</p>
+        </section>
+
+        <section id="recovery" aria-labelledby="recovery-heading">
+          <h2 id="recovery-heading">受控实验 · 25 Hz 视觉伺服能否救回插管？</h2>
+          <div class="result-split" aria-label="配对微扰恢复率">
+            <div><strong>13/48 · 27.1%</strong><span>固定轨迹 · 接管时只估计一次管姿</span></div>
+            <div><strong>24/48 · 50.0%</strong><span>几何视觉伺服 · 每 40 ms 更新管姿</span></div>
+          </div>
+          <p>完整任务的历史运行同时变更了多项因素。我另选了四段已失败的 RoboDojo / PhysX 接触轨迹，重放到同一物理状态，固定目标孔、右臂与时间预算，由左臂接管。两种闭环控制器根据 RGB 估计管尖和管轴再纠偏，视觉丢失时暂停修正。第三组在同一视觉输入上增加短时运动预测，用于检查世界模型是否有额外收益。</p>
+          <figure>
+            <video controls playsinline preload="none" poster="assets/tube-slip-recovery.webp" aria-label="试管滑动后四种轨迹的同步仿真回放">
+              <source src="assets/tube-slip-recovery.mp4" type="video/mp4">
+              <a href="assets/tube-slip-recovery.mp4">下载试管恢复回放</a>
+            </video>
+            <figcaption>指间滑动原样复跑。左至右为原失败续段、固定轨迹、几何视觉伺服、世界模型辅助。上排为左腕视角，下排为头部视角。</figcaption>
+          </figure>
+          <div class="table-scroll" role="region" aria-label="四个接触起点的配对试验结果" tabindex="0">
+            <table>
+              <caption>每个起点共享 12 组微扰序列（左臂目标关节角最多 ±0.15°），三个方法分别运行。</caption>
+              <thead><tr><th scope="col">接管时的状态</th><th scope="col">固定轨迹</th><th scope="col">视觉伺服</th><th scope="col">世界模型辅助</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">孔沿接触</th><td>12/12</td><td>12/12</td><td>12/12</td></tr>
+                <tr><th scope="row">下压卡住</th><td>0/12</td><td>0/12</td><td>0/12</td></tr>
+                <tr class="highlight-row"><th scope="row">双指间滑动</th><td>1/12</td><td><strong>12/12</strong></td><td>12/12</td></tr>
+                <tr><th scope="row">持管倾倒</th><td>0/12</td><td>0/12</td><td>0/12</td></tr>
+              </tbody>
+              <tfoot><tr><th scope="row">四个指定起点等权</th><td>13/48</td><td><strong>24/48</strong></td><td>24/48</td></tr></tfoot>
+            </table>
+          </div>
+          <p>每种方法另做了 20 次无外加微扰的原样复跑，固定轨迹 5/20，另外两组各 10/20。两部分合计 204 次仿真。每条分支执行 99 个控制步（3.96 秒仿真时间），成功要求撤手后最后连续 8 步都满足指定孔位、插入深度超过 45 mm、管轴偏离竖直不超过 30°等条件。控制器读取 RGB 和本体状态，仿真真值用于选片、核对与判分。</p>
+          <p class="callout"><strong>改善来自指间滑动。</strong>这一状态的微扰试次里，闭环把撤手后管尖深度中位数从 16.7 mm 提高到 54.0 mm。四个起点合计提升 22.9 个百分点，固定起点内的配对 bootstrap 95% 区间为 18.8–25.0 个百分点。该区间描述所选接管状态下的局部恢复，完整插管任务仍需端到端验证。</p>
+          <p><a href="assets/tube-recovery-trials.csv" download>下载 204 次接管试验明细（CSV）</a></p>
+        </section>
+
+        <section id="limits" aria-labelledby="limits-heading">
+          <h2 id="limits-heading">哪些失败需要不同的处理？</h2>
+          <ul class="steps">
+            <li><strong>倾倒：</strong>持续提供准确的仿真管姿时，原先失败的两个闭环控制器均救回 2/2。仅校准首帧仍为 0/2，说明这段轨迹需要持续可靠的管姿观测。</li>
+            <li><strong>卡住：</strong>逐步给准确管姿、再把纠偏时长翻倍，两种方法仍各为 0/2。控制指令与关节实测继续分离，后续应优先检查受阻时的实际关节反馈和卸载策略。</li>
+            <li><strong>短时预测：</strong>当前世界模型辅助与视觉伺服在全部 48 组配对微扰中成败相同。在这组状态上，简单几何闭环已经覆盖了观测到的收益。</li>
+          </ul>
+        </section>
+        <section id="sources" aria-labelledby="sources-heading">
+          <h2 id="sources-heading">数据与来源</h2>
+          <p>任务表来自我的 RoboDojo 复盘记录。Agent 历史运行和配对恢复来自本地实验工作台，页面提供选段回放和精简后的逐次判分。逐任务描述、历史系统对照、接触状态配对分别有各自的取样口径。</p>
+          <ul class="source-list">
+            <li><a href="https://robodojo-benchmark.com/">RoboDojo 官方项目与 Agent Track</a></li>
+            <li><a href="https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/task/RoboDojo/tasks/press_by_number.py">RoboDojo 官方按键判分实现</a></li>
+            <li><a href="https://huggingface.co/spaces/Solomonz/roboprobe-console">RoboProbe 公共复盘工作台</a></li>
+            <li><a href="https://www.anthropic.com/research/claude-plays-robotics">Anthropic 的机器人控制接口对比</a> · <a href="https://openvla.github.io/">OpenVLA 项目页的实验与回放展示</a></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-inner"><a href="index.html">返回项目选集</a><a href="dobot-sim2real.html">下一篇 · Dobot 具身智能挑战赛</a></div></footer>
+</body>
+</html>

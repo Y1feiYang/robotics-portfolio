@@ -1,27 +1,146 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="2026 Dobot 具身智能挑战赛技术支持：Isaac Sim 赛题开发与 Sim2Real VLA 微调。">
-<title>Dobot 具身智能挑战赛技术支持</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="杨一飞的 Dobot 具身智能挑战赛技术案例，涵盖 Isaac Sim 操作任务开发、真机示教、π0.5 微调与真机闭环推理。">
+  <title>Dobot 挑战赛：从 Isaac Sim 赛题到真机推理 · 杨一飞</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><div class="wrap"><nav aria-label="作品导航"><a href="index.html">项目选集</a><a href="robodojo-agent.html">RoboDojo 与 Robot-use Agent</a><a href="dobot-sim2real.html" aria-current="page">Dobot 挑战赛</a></nav><div class="hero"><p class="eyebrow">02 · Isaac Sim / Sim2Real</p><h1>Dobot 具身智能挑战赛技术支持</h1><p>参与 2026 Dobot 具身智能挑战赛的技术支持，主要工作是基于 Isaac Sim 开发机器人操作任务，以及面向真实机器人的 VLA 微调。</p></div></div></header>
-<main class="wrap content">
-<section aria-labelledby="context"><h2 id="context">赛事背景和个人分工</h2><p class="lede">赛事由中国人工智能学会主办，越疆科技等单位联合承办，包含线上仿真初赛和线下真机决赛。公开赛题覆盖料品分拣、双臂工位清洁和试管取放；这些是赛事范围，并不等于我独立负责全部赛题。<a href="https://www.caai.cn/site/content/5476.html">查看 CAAI 官方赛事公告</a>。</p>
-<div class="grid"><div class="panel"><p class="case-label">我的工作</p><h3>Isaac Sim 赛题开发</h3><p>在 Isaac Sim 中进行机器人操作任务开发，围绕操作目标组织场景和物体，理解任务配置如何影响数据采集与后续验证。</p></div><div class="panel"><p class="case-label">我的工作</p><h3>Sim2Real VLA 微调</h3><p>参与面向真机的 VLA 微调，将训练环节与部署端的观测和动作定义对齐，关注仿真与真实硬件的差异如何影响策略执行。</p></div></div></section>
-<section aria-labelledby="pipeline"><h2 id="pipeline">从场景到真机的流水线</h2>
-<ol class="flow">
-<li class="panel"><h3>仿真任务</h3><p>定义操作目标，搭建场景，检查物体与机器人是否按预期交互。</p></li>
-<li class="panel"><h3>示教与数据</h3><p>检查任务指令、相机观测与时间同步，明确动作的坐标系、单位与夹爪约定。</p></li>
-<li class="panel"><h3>模型微调</h3><p>确保数据和模型的观测、动作接口一致，用任务回放排查训练与部署端的输入输出问题。</p></li>
-<li class="panel"><h3>真机验证</h3><p>核对标定与动作映射，记录失败发生在接近目标、接触还是完成动作之后。</p></li>
-</ol><p class="lede">这条链路的关键是保持训练和部署使用相同的动作含义。到达真机后，如果坐标系、单位或夹爪约定变了，应先排除接口问题，再判断是否是模型没有学会任务。</p></section>
-<section aria-labelledby="demos"><h2 id="demos">演示素材</h2><div class="grid">
-<div class="panel"><h3>真机遥操作</h3><div class="media-empty"><p>待补可公开的真机遥操作片段。</p></div></div>
-<div class="panel"><h3>真机策略推理</h3><div class="media-empty"><p>待补可公开的真机推理片段及运行条件。</p></div></div>
-</div></section>
-</main><footer class="wrap foot"><a href="index.html">返回项目选集</a></footer>
-</body></html>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap site-nav">
+      <a class="wordmark" href="index.html">杨一飞 <span>Yifei Yang</span></a>
+      <nav aria-label="项目导航">
+        <a href="robodojo-agent.html">RoboDojo 与 Agent</a>
+        <a href="dobot-sim2real.html" aria-current="page">Dobot 挑战赛</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="hero-band">
+      <section class="wrap article-hero" aria-labelledby="page-title">
+        <p class="eyebrow">Isaac Sim / Sim2Real / π₀.₅</p>
+        <h1 id="page-title">Dobot 挑战赛：从仿真赛题到真机推理</h1>
+        <p class="lede">协助越疆科技开展赛事技术工作。我在 Isaac Sim 中搭建和调试协作机械臂操作任务，并打通真机遥操作、数据采集、π₀.₅ 微调、部署与推理验证。</p>
+        <p class="byline">杨一飞 · 项目参与时间 2025.11–2026.02</p>
+      </section>
+    </div>
+
+    <div class="wrap article-layout">
+      <aside class="article-toc">
+        <p>本文目录</p>
+        <nav aria-label="本文目录">
+          <a href="#role">我的分工</a>
+          <a href="#pipeline">开发与部署</a>
+          <a href="#simulation-case">试管插入评分示例</a>
+          <a href="#interfaces">训练与真机接口</a>
+          <a href="#verification">验证与排查</a>
+          <a href="#videos">真机演示</a>
+          <a href="#references">来源</a>
+        </nav>
+      </aside>
+
+      <div class="article-body">
+        <section id="role" aria-labelledby="role-title">
+          <h2 id="role-title">我的分工</h2>
+          <p>赛事包含线上仿真和线下真机两个阶段。赛方公布的三类操作任务是料品分拣、工位清洁和试管取放，分别涉及多视角检测与分类、双臂工具操作、精确抓取与插入。<a href="https://challenge.dobot-robots.com/">Dobot 赛事官网</a></p>
+          <p>我的工作覆盖两条链路。仿真侧负责基于 Isaac Sim 搭建协作机械臂操作场景并调试任务。真机侧从遥操采集出发，接通 VLA 训练和策略部署，完成真机推理验证。两条链路的交接点是任务目标、机器人观测和动作接口。</p>
+        </section>
+
+        <section id="pipeline" aria-labelledby="pipeline-title">
+          <h2 id="pipeline-title">从场景开发到真机闭环</h2>
+          <ol class="flow">
+            <li>
+              <h3>Isaac Sim 场景与任务调试</h3>
+              <p>将任务目标落实为机械臂、工作台、操作物和相机组成的场景，调试初始配置和物体交互。调试时先检查复位后一致性、末端可达性和接触行为，再核对任务完成判据能否区分完整操作和中途状态。</p>
+            </li>
+            <li>
+              <h3>真机遥操与数据采集</h3>
+              <p>通过遥操作示教采集真实轨迹。数据验收沿着任务指令、相机帧、机器人状态和控制指令逐项检查。按同一帧或时间基准对齐，回放确认接近、抓取、运输和释放等动作在记录中完整可读。</p>
+            </li>
+            <li>
+              <h3>π₀.₅ 微调</h3>
+              <p>将示教轨迹整理成策略需要的观测、动作与语言输入。训练前核对相机键、关节与夹爪顺序、动作表示和归一化统计量，确保微调检查点能按相同的接口加载到推理端。</p>
+            </li>
+            <li>
+              <h3>真机部署与推理验证</h3>
+              <p>策略接收当前观测与指令，返回一段动作。真机按控制周期执行并更新观测。部署首先验证观测能进入模型、输出能正确映射到机器人，再从可重复的初始条件检查对象终态。</p>
+            </li>
+          </ol>
+        </section>
+
+        <section id="simulation-case" aria-labelledby="simulation-case-title">
+          <h2 id="simulation-case-title">试管插入如何变成可评测任务</h2>
+          <p>越疆公开的试管赛题要求把 3 支试管插入架上的孔位。仿真评分用每支试管的判定点和试管架判定区域计算插入分，3 支共 80 分；全数完成后，再按耗时计算最高 20 分的效率分。这个设计把任务进度写成可读的计数，同时将效率奖励放在完成之后。<a href="https://github.com/Dobot-Edu/X-trainer-tube/blob/main/assets/docs/README.md">官方仿真赛题与评分实现说明</a></p>
+          <p>调试这类任务时，我会先用已知的初始和结束状态校验评分，再用边界状态排查误判。例如试管仍被夹住、管身倾斜、或已接近孔位但未稳定插入时，应逐帧观察判定值和接触状态，确认分数与真正需要完成的操作一致。</p>
+        </section>
+
+        <section id="interfaces" aria-labelledby="interfaces-title">
+          <h2 id="interfaces-title">训练和部署怎样使用同一套接口</h2>
+          <p>下面用越疆公开的 X-Trainer π0.5 实现说明数据如何过接口。通道数和维度来自公开参考实现。<a href="https://github.com/Dobot-Edu/X-Trainer-Pi0.5-JAX">X-Trainer π0.5 工程参考</a></p>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="X-Trainer 训练和真机接口对照表">
+            <table>
+              <thead>
+                <tr><th scope="col">接口</th><th scope="col">公开实现</th><th scope="col">部署核对项</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">视觉输入</th><td>3 路 RGB，顶部、左腕、右腕</td><td>逐路确认相机键、视角归属和预处理。</td></tr>
+                <tr><th scope="row">本体状态</th><td>14 维，左右臂各 6 个关节加 1 个夹爪</td><td>核对左右臂顺序、单位和夹爪开合方向。</td></tr>
+                <tr><th scope="row">动作输出</th><td>每个时间步 14 维，按动作段返回</td><td>核对动作语义、限幅和控制频率，用小幅动作确认映射。</td></tr>
+                <tr><th scope="row">训练数据</th><td>LeRobot 轨迹、任务指令、归一化统计量</td><td>推理读取训练对应的检查点和统计量。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="verification" aria-labelledby="verification-title">
+          <h2 id="verification-title">真机试跑时怎样定位问题</h2>
+          <p>先用可重复的初始布置验证链路，再观察扰动条件下的失败。接口验收看策略能否收到三类输入（图像、本体状态、指令）、返回可执行动作，夹爪能否正确开合。任务验收看抓取、运输与放置后物体是否达到目标终态，并记录每轮失败阶段。</p>
+          <ul>
+            <li><strong>第一步就跑偏</strong>。先用单关节小幅动作检查左右臂、关节方向、单位与夹爪约定。</li>
+            <li><strong>手臂遮挡后抓偏</strong>。回放对应腕部与全局画面，检查视角映射、遮挡、帧对齐和相似布置下的示教覆盖。</li>
+            <li><strong>末端接近目标后卡住</strong>。同步观察动作段与物体终态，分别检查动作更新时序、实物几何和接触约束。</li>
+          </ul>
+          <p class="callout"><strong>验证范围</strong>　已跑通从真机采集到策略上机推理的链路。本文公开的是流程与验收口径，暂无可公开的逐轮成功率和对照结果。</p>
+        </section>
+
+        <section id="videos" aria-labelledby="videos-title">
+          <h2 id="videos-title">真机演示</h2>
+          <p>越疆公开的 X-Trainer 插管数据卡记录了 119 条示教、30 Hz 控制频率与三个相机视角，可在数据集页查看样例。这是越疆发布的参考数据。<a href="https://huggingface.co/datasets/Dobot-Official/X-Trainer-tube">查看数据卡与视频样例</a></p>
+          <div class="media-grid">
+            <article class="panel">
+              <h3>遥操作与示教采集</h3>
+              <p>视频待补。展示人工控制机械臂以及示教轨迹如何记录相机画面和动作。</p>
+            </article>
+            <article class="panel">
+              <h3>π₀.₅ 真机推理</h3>
+              <p>视频待补。展示同类任务的自主执行过程，附任务指令、运行条件和最终物体状态。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="references" aria-labelledby="references-title">
+          <h2 id="references-title">来源</h2>
+          <ul class="source-list">
+            <li><a href="https://www.caai.cn/site/content/5476.html">中国人工智能学会赛事公告</a> · <a href="https://ceai.caai.cn/">CEAI 2026 决赛日程</a></li>
+            <li><a href="https://challenge.dobot-robots.com/">Dobot 挑战赛官方赛题与赛程</a></li>
+            <li><a href="https://github.com/Dobot-Edu/X-trainer-tube/blob/main/assets/docs/README.md">Dobot X-Trainer 仿真任务与评分</a> · <a href="https://huggingface.co/datasets/Dobot-Official/X-Trainer-tube">公开插管数据卡</a></li>
+            <li><a href="https://github.com/Dobot-Edu/X-Trainer-Pi0.5-JAX">Dobot X-Trainer π0.5 采集、微调与部署实现</a></li>
+            <li><a href="https://github.com/Physical-Intelligence/openpi">Physical Intelligence OpenPI</a></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <a href="index.html">返回项目选集</a>
+      <a href="robodojo-agent.html">阅读 RoboDojo 与 Robot-use Agent</a>
+    </div>
+  </footer>
+</body>
+</html>
